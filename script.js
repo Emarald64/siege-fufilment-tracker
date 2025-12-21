@@ -1,3 +1,8 @@
+//TODO 
+// fix CORS
+// ships.hackclub.com api
+// make it look better
+
 var slackID="U0785D5VDEK"
 const siegeUserApiUrl="https://siege.hackclub.com/api/public-beta/user/"
 
@@ -12,48 +17,25 @@ function setSlackID(value){
     }
 }
 
-// function getSiegeUserData(){
-//     return fetch(siegeUserApiUrl+slackID)
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         return data
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//     });
-// }
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
-// async function getSiegeUserDataOrCached(forceRefresh=false){
-//     let storedData=JSON.parse(localStorage.getItem("SiegeUserData"))
-//     if (forceRefresh || storedData==null || Date.now()>storedData.time+1800000){
-//         // get new data
-//         fetch(siegeUserApiUrl+slackID)
-//             .then(response => {
-//                 if (!response.ok) {
-//                     throw new Error('Network response was not ok');
-//                 }
-//                 return response.json();
-//             })
-//             .then(data => {
-//                 return data
-//             })
-//             .catch(error => {
-//                 console.error('Error:', error);
-//             });
-//         localStorage.setItem("SiegeUserData",JSON.stringify({time:Date.now(), data:newData}))
-//         return newData
-//     }else{
-//     // use cached data
-//         console.log('using cached')
-//         return storedData.data
-//     }
-// }
-
+async function loadShipsData(repos){
+    let response=(await fetch("https://ships.hackclub.com/api/v1/ysws_entries")
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    }))
+    console.log(response)
+    let out=response.filter(entry=>{
+        return repos.includes(entry.code_url)
+    })
+    console.log(out)
+    return out
+}
 
 async function refreshProjectData(projectIDs){
     let promises=projectIDs.map(projectID=>{
@@ -69,8 +51,7 @@ async function refreshProjectData(projectIDs){
     })
     projectsData={time:Date.now()}
     console.log(promises)
-    for(promiseIdx in promises){
-        let promise=promises[promiseIdx]
+    for(promise of promises){
         projectsData[promise[0]]=await promise[1]
         console.log(projectsData)
     }
@@ -79,20 +60,29 @@ async function refreshProjectData(projectIDs){
 }
 
 async function loadSiegeProjects(data){
-    console.log(data.id)
     const siegeProjects=document.getElementById("siegeProjects")
     siegeProjects.style.display='grid'
-    let storedData=JSON.parse(localStorage.getItem("SiegeProjectData"))
-    if(true||storedData==null || Date.now()>storedData.time+1800000){
+    
+    // refresh siege data
+    let siegeProjectData=JSON.parse(localStorage.getItem("SiegeProjectData"))
+    if(siegeProjectData==null || Date.now()>siegeProjectData.time+1800000){
         projectIds=data.projects.map(project=>{return project.id})
-        // for(projectIdx in data.projects){
-        //     projectIds.push(data.projects[projectIdx].id)
-        // }
-        console.log(projectIds)
-        storedData=(await refreshProjectData(projectIds))
-        console.log(storedData)
-        localStorage.setItem("SiegeProjectData",JSON.stringify(storedData))
+        siegeProjectData=(await refreshProjectData(projectIds))
+        localStorage.setItem("SiegeProjectData",JSON.stringify(siegeProjectData))
     }
+    delete siegeProjectData.time
+    console.log(siegeProjectData)
+
+    let shipsData=JSON.parse(localStorage.getItem("shipsData"))
+    let shipsDataPromise
+    if(shipsData==null || Date.now()>shipsData.time+1800000){
+        console.log("loading new Ships data")
+        // console.log(Object.values(siegeProjectData).map(project=>{return project.repo_url}))
+        shipsDataPromise=loadShipsData(Object.values(siegeProjectData).map(project=>{return project.repo_url}))
+    }else{
+        shipsData=shipsData.data
+    }
+    let projectBoxes=[]
     for (projectIdx in data.projects){
         let project=data.projects[projectIdx]
 
@@ -102,16 +92,37 @@ async function loadSiegeProjects(data){
         `
         <h3>${project.name}</h3>
         <p>${project.week_badge_text}</p>
-        <p>${storedData[project.id].description}</p>
-        <p>Status: ${project.status}</p>
+        <p>${siegeProjectData[project.id].description}</p>
+        <p>Status: ${capitalizeFirstLetter(project.status)}</p>
         `
         siegeProjects.appendChild(projectBox)
+        projectBoxes.push({box:projectBox,projectID:project.id})
+    }
+    
+    document.getElementById("username").innerHTML=data.name
+    document.getElementById("userStatus").innerHTML="Status: "+capitalizeFirstLetter(data.status)
+    document.getElementById("coins").innerHTML=data.coins
+    if (shipsDataPromise!=null){
+        shipsData=await shipsDataPromise
+        console.log('shipsData')
+        console.log(shipsData)
+        localStorage.setItem("shipsData",JSON.stringify({data:shipsData,time:Date.now()}))
+    }
+    // console.log(shipsData)
+    // for(ship of shipsData){
+    //     console.log(ship.code_url)
+    // }
+    // console.log('projects')
+    for(projectBox of projectBoxes){
+        // console.log(siegeProjectData[projectBox.projectID].repo_url)
+        projectBox.box.innerHTML+=`<p>Approved: ${shipsData.some(ship=>{return ship.code_url == siegeProjectData[projectBox.projectID].repo_url})}</p>`
     }
 }
 
 function loadSiegeStuff(){
     let storedData=JSON.parse(localStorage.getItem("SiegeUserData"))
     if (storedData==null || Date.now()>storedData.time+1800000){
+        // fetch new data
         fetch(siegeUserApiUrl+slackID)
             .then(response => {
                 if (!response.ok) {
