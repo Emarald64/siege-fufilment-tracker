@@ -3,6 +3,13 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
-<body>
+<body onload="onload()">
+    <div id="slackIDGetter">
+        <label for="slackID">Enter your Slack ID</label>
+        <input type="text" id="slackID" name="slackID">
+        <input type="submit" onclick="setSlackID(document.getElementById('slackID').value)" value="Submit">
+    </div>
+    <div id="siegeProjects" style="display:none">
 
+    </div>
 </body>
