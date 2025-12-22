@@ -1,4 +1,4 @@
-body{
+html{
     background-color: #111;
     color:white;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -31,13 +31,13 @@ body{
     grid-template-columns: repeat(auto-fill,minmax(400px,1fr));
     gap:12px;
     margin-top: 20px;
+    display:grid;
 }
 
 #userInfo{
     margin-left:20px;
-    margin-bottom: 20px;
-    margin-bottom: 10px;
-    display: none;
+    margin: 20px;
+    display: flex;
     gap:20px;
     align-items:baseline;
 }
@@ -52,4 +52,12 @@ body{
 
 #coinIcon{
     height:2ch;
+}
+
+#hideBeforeID{
+    display: none;
+}
+
+#coins{
+    margin:0;
 }

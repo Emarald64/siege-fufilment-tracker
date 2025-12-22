@@ -9,17 +9,18 @@
         <input type="text" id="slackID" name="slackID">
         <input type="submit" onclick="setSlackID(document.getElementById('slackID').value)" value="Submit">
     </div>
-    <button onclick="localStorage.clear();location.reload()">Clear Saved Data</button>
-    <div id="userInfo">
-        <h1 id="username"></h1>
-        <h2 id="userStatus"></h2>
-        <div style="dislpay:flex;">
-            <img src="https://siege.hackclub.com/assets/coin-e29f6b57.png" id="coinIcon">
-            <h2 id="coins" style=" display: inline;"></h2>
+    <div id="hideBeforeID">
+        <button id="dataClearer" onclick="localStorage.clear();location.reload()">Clear Saved Data</button>
+        <div id="userInfo">
+            <h1 id="username"></h1>
+            <h2 id="userStatus"></h2>
+            <div style="display:flex; gap: 5px">
+                <img src="https://siege.hackclub.com/assets/coin-e29f6b57.png" id="coinIcon">
+                <h2 id="coins"></h2>
+            </div>
         </div>
-    </div>
-    <hr>
-    <div id="siegeProjects" style="display:none">
-
+        <hr>
+        <div id="siegeProjects">
+        </div>
     </div>
 </body>

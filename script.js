@@ -72,12 +72,11 @@ const forattedUserStatuses={
 
 async function loadSiegeProjects(data){
     const siegeProjects=document.getElementById("siegeProjects")
-    siegeProjects.style.display='grid'
     document.getElementById("username").innerHTML=data.name
     document.getElementById("userStatus").innerHTML="Status: "+forattedUserStatuses[data.status]
     document.getElementById("coins").innerHTML=data.coins
-    document.getElementById("userInfo").style.display="flex"
-    // refresh siege data
+    document.getElementById("hideBeforeID").style.display="block"
+
     let siegeProjectData=JSON.parse(localStorage.getItem("SiegeProjectData"))
     if(siegeProjectData==null || Date.now()>siegeProjectData.time+1800000){
         projectIds=data.projects.map(project=>{return project.id})
@@ -108,6 +107,8 @@ async function loadSiegeProjects(data){
         <p>${project.week_badge_text}</p>
         <p>${siegeProjectData[project.id].description}</p>
         <p>Status: ${capitalizeFirstLetter(project.status)}</p>
+        <p>Hours:${siegeProjectData[project.id].hours}</p> 
+        <p>Coins:${siegeProjectData[project.id].coin_value}</p> 
         <div>
             <a href="${siegeProjectData[project.id].demo_url}">Demo</a>
             <a href="${siegeProjectData[project.id].repo_url}">Repo</a>
