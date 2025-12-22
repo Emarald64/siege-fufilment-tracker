@@ -3,7 +3,9 @@
 // make it look better
 
 var slackID="U0785D5VDEK"
-const siegeUserApiUrl="https://corsproxy.io/?url=https://siege.hackclub.com/api/public-beta/user/"
+const siegeUserApiUrl="https://siege.hackclub.com/api/public-beta/user/"
+var useCorsProxy=true
+
 
 function setSlackID(value){
     console.log("set slack id to: "+value)
@@ -20,8 +22,13 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+function getCorsProxy(){
+    if (useCorsProxy) return "https://corsproxy.io/?url="
+    return ""
+}
+
 async function loadShipsData(repos){
-    return (await fetch("https://corsproxy.io/?url=https://ships.hackclub.com/api/v1/ysws_entries")
+    return (await fetch("https://ships.hackclub.com/api/v1/ysws_entries")
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -35,7 +42,7 @@ async function loadShipsData(repos){
 async function refreshProjectData(projectIDs){
     let promises=projectIDs.map(projectID=>{
         return [projectID,
-            fetch("https://corsproxy.io/?url=https://siege.hackclub.com/api/public-beta/project/"+projectID)
+            fetch(getCorsProxy()+"https://siege.hackclub.com/api/public-beta/project/"+projectID)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -136,7 +143,7 @@ function loadSiegeStuff(){
     let storedData=JSON.parse(localStorage.getItem("SiegeUserData"))
     if (storedData==null || Date.now()>storedData.time+1800000){
         // fetch new data
-        fetch(siegeUserApiUrl+slackID)
+        fetch(getCorsProxy()+siegeUserApiUrl+slackID)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
