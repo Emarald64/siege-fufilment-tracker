@@ -3,7 +3,7 @@
 // make it look better
 
 var slackID="U0785D5VDEK"
-const siegeUserApiUrl="https://siege.hackclub.com/api/public-beta/user/"
+const siegeUserApiUrl="https://corsproxy.io/?url=https://siege.hackclub.com/api/public-beta/user/"
 
 function setSlackID(value){
     console.log("set slack id to: "+value)
@@ -21,7 +21,7 @@ function capitalizeFirstLetter(string) {
 }
 
 async function loadShipsData(repos){
-    return (await fetch("https://ships.hackclub.com/api/v1/ysws_entries")
+    return (await fetch("https://corsproxy.io/?url=https://ships.hackclub.com/api/v1/ysws_entries")
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -35,7 +35,7 @@ async function loadShipsData(repos){
 async function refreshProjectData(projectIDs){
     let promises=projectIDs.map(projectID=>{
         return [projectID,
-            fetch("https://siege.hackclub.com/api/public-beta/project/"+projectID)
+            fetch("https://corsproxy.io/?url=https://siege.hackclub.com/api/public-beta/project/"+projectID)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
