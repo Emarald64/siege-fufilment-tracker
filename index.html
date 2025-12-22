@@ -5,17 +5,20 @@
 </head>
 <body onload="onload()">
     <div id="slackIDGetter">
-        <label for="slackID">Enter your Slack ID</label>
+        <label for="slackID">Enter your Slack or Siege ID</label>
         <input type="text" id="slackID" name="slackID">
         <input type="submit" onclick="setSlackID(document.getElementById('slackID').value)" value="Submit">
     </div>
+    <button onclick="localStorage.clear();location.reload()">Clear Saved Data</button>
     <div id="userInfo">
         <h1 id="username"></h1>
         <h2 id="userStatus"></h2>
-        
-        <img src="https://siege.hackclub.com/assets/coin-e29f6b57.png" style="height:2ch;">
-        <h2 id="coins" style=" display: inline;"></h2>
+        <div style="dislpay:flex;">
+            <img src="https://siege.hackclub.com/assets/coin-e29f6b57.png" id="coinIcon">
+            <h2 id="coins" style=" display: inline;"></h2>
+        </div>
     </div>
+    <hr>
     <div id="siegeProjects" style="display:none">
 
     </div>

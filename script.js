@@ -54,10 +54,22 @@ async function refreshProjectData(projectIDs){
     return projectsData
 }
 
+const forattedUserStatuses={
+    "working":"Working&#x1F9D1&#x200D&#x1F4BB",
+    "banned":"Banned&#x26D4",
+    "out":"Out&#x1F622",
+    "approved":"Approved&#x1F389",
+    "new":"New&#x1F476",
+    "fufilled":"fufilled&#x1F4BB"
+}
+
 async function loadSiegeProjects(data){
     const siegeProjects=document.getElementById("siegeProjects")
     siegeProjects.style.display='grid'
-    
+    document.getElementById("username").innerHTML=data.name
+    document.getElementById("userStatus").innerHTML="Status: "+forattedUserStatuses[data.status]
+    document.getElementById("coins").innerHTML=data.coins
+    document.getElementById("userInfo").style.display="flex"
     // refresh siege data
     let siegeProjectData=JSON.parse(localStorage.getItem("SiegeProjectData"))
     if(siegeProjectData==null || Date.now()>siegeProjectData.time+1800000){
@@ -89,14 +101,15 @@ async function loadSiegeProjects(data){
         <p>${project.week_badge_text}</p>
         <p>${siegeProjectData[project.id].description}</p>
         <p>Status: ${capitalizeFirstLetter(project.status)}</p>
+        <div>
+            <a href="${siegeProjectData[project.id].demo_url}">Demo</a>
+            <a href="${siegeProjectData[project.id].repo_url}">Repo</a>
+        </div>
         `
         siegeProjects.appendChild(projectBox)
         projectBoxes.push({box:projectBox,projectID:project.id})
     }
     
-    document.getElementById("username").innerHTML=data.name
-    document.getElementById("userStatus").innerHTML="Status: "+capitalizeFirstLetter(data.status)
-    document.getElementById("coins").innerHTML=data.coins
     if (shipsDataPromise!=null){
         shipsData=await shipsDataPromise
         console.log('shipsData')
@@ -113,7 +126,9 @@ async function loadSiegeProjects(data){
         projectBox.box.innerHTML+=`<p>Approved: ${projectApproved}</p>`
     }
     if (data.status=="working"){
-        document.getElementById("userInfo").innerHTML+="<p>"+mainWeeksApproved+"/10 main weeks approved"
+        let approvedInfo=document.createElement("p")
+        approvedInfo.innerText=mainWeeksApproved+"/10 main weeks approved"
+        document.getElementById("userInfo").appendChild(approvedInfo)
     }
 }
 
