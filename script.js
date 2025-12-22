@@ -1,5 +1,4 @@
 //TODO 
-// fix CORS
 // make it look better
 
 var slackID="U0785D5VDEK"
