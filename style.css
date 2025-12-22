@@ -30,3 +30,8 @@ body{
     grid-template-columns: repeat(auto-fill,minmax(400px,1fr));
     gap:12px
 }
+
+#userInfo{
+    margin-left:20px;
+    margin-bottom: 50px;
+}

@@ -1,6 +1,5 @@
 //TODO 
 // fix CORS
-// ships.hackclub.com api
 // make it look better
 
 var slackID="U0785D5VDEK"
@@ -22,19 +21,15 @@ function capitalizeFirstLetter(string) {
 }
 
 async function loadShipsData(repos){
-    let response=(await fetch("https://ships.hackclub.com/api/v1/ysws_entries")
+    return (await fetch("https://ships.hackclub.com/api/v1/ysws_entries")
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
         return response.json();
-    }))
-    console.log(response)
-    let out=response.filter(entry=>{
+    })).filter(entry=>{
         return repos.includes(entry.code_url)
     })
-    console.log(out)
-    return out
 }
 
 async function refreshProjectData(projectIDs){
@@ -108,14 +103,17 @@ async function loadSiegeProjects(data){
         console.log(shipsData)
         localStorage.setItem("shipsData",JSON.stringify({data:shipsData,time:Date.now()}))
     }
-    // console.log(shipsData)
-    // for(ship of shipsData){
-    //     console.log(ship.code_url)
-    // }
-    // console.log('projects')
+    // use data from ships
+    let mainWeeksApproved=0
     for(projectBox of projectBoxes){
-        // console.log(siegeProjectData[projectBox.projectID].repo_url)
-        projectBox.box.innerHTML+=`<p>Approved: ${shipsData.some(ship=>{return ship.code_url == siegeProjectData[projectBox.projectID].repo_url})}</p>`
+        let projectApproved=shipsData.some(ship=>{return ship.code_url == siegeProjectData[projectBox.projectID].repo_url})
+
+        let weekNumber=parseInt(siegeProjectData[projectBox.projectID].week_badge_text.slice(5))
+        if(weekNumber>4 && weekNumber<=14 && projectApproved)mainWeeksApproved++
+        projectBox.box.innerHTML+=`<p>Approved: ${projectApproved}</p>`
+    }
+    if (data.status=="working"){
+        document.getElementById("userInfo").innerHTML+="<p>"+mainWeeksApproved+"/10 main weeks approved"
     }
 }
 
