@@ -27,7 +27,7 @@ function getCorsProxy(){
 }
 
 async function loadShipsData(repos){
-    return (await fetch("https://ships.hackclub.com/api/v1/ysws_entries")
+    return (await fetch(getCorsProxy()+"https://ships.hackclub.com/api/v1/ysws_entries")
     .then(response => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
