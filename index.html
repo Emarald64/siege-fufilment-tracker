@@ -11,8 +11,8 @@
         <input type="text" id="slackID" name="slackID">
         <input type="submit" onclick="setSlackID(document.getElementById('slackID').value)" value="Submit">
     </div>
+    <button id="dataClearer" onclick="localStorage.clear();location.reload()">Clear Saved Data</button>
     <div id="hideBeforeID">
-        <button id="dataClearer" onclick="localStorage.clear();location.reload()">Clear Saved Data</button>
         <div id="userInfo">
             <h1 id="username"></h1>
             <h2 id="userStatus"></h2>
